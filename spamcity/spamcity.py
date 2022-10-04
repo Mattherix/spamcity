@@ -1,43 +1,14 @@
+import urllib
 from itertools import count
+from multiprocessing import Pool
+from random import choice, randint
+from time import sleep
 from typing import Tuple
+
 import requests
 from bs4 import BeautifulSoup
-import urllib
-#import logging as log
-from random import choice
-from random import randint
-from time import sleep
-from multiprocessing import Pool
-import tqdm
 
-
-"""def setup_log():
-    log.basicConfig(
-        filename="spamcity.log",
-        format="%(asctime)s - %(levelname)s - %(process)d - %(message)s",
-        datefmt="%d-%b-%y %H:%M:%S",
-    )
-"""
-
-def is_proxy_working(proxy: str) -> Tuple[str, bool]:
-    #log.info(f"Testing {proxy}")
-    try:
-        response = requests.get("https://api.myip.com/", proxies={"https": proxy}, timeout=5)
-        if response.status_code == 200:
-            #log.info(f"{proxy} is working")
-            return (proxy, True)
-    except:
-        pass
-
-    #log.info(f"{proxy} is not working")
-    return (proxy, False)
-
-
-def proxy_generator():
-    proxy = choice(list(lines))
-    proxy = {"https": proxy}
-    print(proxy)
-    return proxy
+from proxy import is_proxy_working, proxy_generator
 
 
 def pretty_print_POST(req):
@@ -52,19 +23,19 @@ def pretty_print_POST(req):
 
 
 def spam():
-    while True:
-        proxy = proxy_generator()
+    status_code = 0
+    while status_code != 200:
+        proxy = proxy_generator(lines)
         try:
             response = requests.get("https://api.myip.com/", proxies=proxy, timeout=5)
             print(response.json())
-            if response.status_code == 200:
-                break
+            status_code = response.status_code
         except:
             print("Proxy is not responding, trying another one")
-    
+
     session = requests.Session()
     country = "France"
-    city = "Brest"
+    city = "Rennes"
     url = f"https://www.numbeo.com/crime/form.jsp?country={country}&city={city}"
     jsessionid = "0"
     try:
@@ -130,7 +101,7 @@ def spam():
         "Origin": "https://www.numbeo.com",
         "DNT": "1",
         "Connection": "keep-alive",
-        "Referer": "https://fr.numbeo.com/criminalit%C3%A9/modifier?returnUrl=https%3A%2F%2Ffr.numbeo.com%2Fcriminalit%25C3%25A9%2Fville%2FBrest&tracking=getEnterDataHtml2ForExtendedModuos&locCity=Brest&locCountry=France",
+        "Referer": "https://fr.numbeo.com/criminalit%C3%A9/modifier?returnUrl=https%3A%2F%2Ffr.numbeo.com%2Fcriminalit%25C3%25A9%2Fville%2FRennes&tracking=getEnterDataHtml2ForExtendedModuos&locCity=Rennes&locCountry=France",
         "Cookie": "JSESSIONID=" + jsessionid,
         "Upgrade-Insecure-Requests": "1",
         "Sec-Fetch-Dest": "document",
@@ -141,7 +112,7 @@ def spam():
     }
     data = {
         "locCountry": "France",
-        "locCity": "Brest",
+        "locCity": "Rennes",
         "level_of_crime": choice(level_of_crime),
         "crime_increasing": choice(crime_increasing),
         "safe_alone_daylight": choice(safe_alone_daylight),
@@ -158,7 +129,7 @@ def spam():
         "problem_violent_crimes": choice(problem_violent_crimes),
         "problem_corruption_bribery": choice(problem_corruption_bribery),
         "checking": jsessionid,
-        "returnUrl": "https://fr.numbeo.com/criminalit%C3%A9/ville/Brest",
+        "returnUrl": "https://fr.numbeo.com/criminalit%C3%A9/ville/Rennes",
     }
 
     url = "https://fr.numbeo.com/crime/i18n-save"
@@ -204,23 +175,23 @@ lines.extend(response6.text.splitlines())
 lines.extend(response7.text.splitlines())
 """
 
-#setup_log()
+# setup_log()
 
-#with open("proxies.txt", mode='r') as f:
+# with open("proxies.txt", mode='r') as f:
 #    lines = [line[:-1] for line in f.readlines()]
 
-#with Pool() as p:
+# with Pool() as p:
 #    results = []
 #    for result in tqdm.tqdm(p.imap_unordered(is_proxy_working, lines), total=len(lines)):
 #        results.append(result)
 
 
-#proxies = [proxy + '\n' for proxy, valid in results if valid]
+# proxies = [proxy + '\n' for proxy, valid in results if valid]
 
-#with open("proxies.txt", mode='w') as f:
+# with open("proxies.txt", mode='w') as f:
 #    f.writelines(proxies)
 
-with open("proxies.txt", mode='r') as f:
+with open("proxies.txt", mode="r") as f:
     lines = [line[:-1] for line in f.readlines()]
 
 while True:
