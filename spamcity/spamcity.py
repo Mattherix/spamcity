@@ -4,11 +4,11 @@ from multiprocessing import Pool
 from random import choice, randint
 from time import sleep
 from typing import Tuple
-
 import requests
 from bs4 import BeautifulSoup
-
-from proxy import is_proxy_working, proxy_generator
+import tqdm
+from os.path import exists
+from proxy import download_proxy, is_proxy_working, proxy_generator
 
 
 def pretty_print_POST(req):
@@ -144,55 +144,9 @@ def spam():
         print("connection failed")
 
 
-"""
-response1 = requests.get(
-    "https://raw.githubusercontent.com/roosterkid/openproxylist/main/HTTPS_RAW.txt"
-)
-response2 = requests.get(
-    "https://raw.githubusercontent.com/saschazesiger/Free-Proxies/master/proxies/ultrafast.txt"
-)
-response3 = requests.get(
-    "https://raw.githubusercontent.com/mertguvencli/http-proxy-list/main/proxy-list/data.txt"
-)
-response4 = requests.get(
-    "https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/http.txt"
-)
-response5 = requests.get(
-    "https://raw.githubusercontent.com/jetkai/proxy-list/main/online-proxies/txt/proxies-https.txt"
-)
-response6 = requests.get(
-    "https://raw.githubusercontent.com/rx443/proxy-list/main/online/https.txt"
-)
-response7 = requests.get(
-    "https://raw.githubusercontent.com/officialputuid/KangProxy/KangProxy/https/https.txt"
-)
-lines = response1.text.splitlines()
-lines.extend(response2.text.splitlines())
-lines.extend(response3.text.splitlines())
-lines.extend(response4.text.splitlines())
-lines.extend(response5.text.splitlines())
-lines.extend(response6.text.splitlines())
-lines.extend(response7.text.splitlines())
-"""
+if __name__ == '__main__':
+    with open("proxies.txt", mode="r") as f:
+        lines = [line[:-1] for line in f.readlines()]
 
-# setup_log()
-
-# with open("proxies.txt", mode='r') as f:
-#    lines = [line[:-1] for line in f.readlines()]
-
-# with Pool() as p:
-#    results = []
-#    for result in tqdm.tqdm(p.imap_unordered(is_proxy_working, lines), total=len(lines)):
-#        results.append(result)
-
-
-# proxies = [proxy + '\n' for proxy, valid in results if valid]
-
-# with open("proxies.txt", mode='w') as f:
-#    f.writelines(proxies)
-
-with open("proxies.txt", mode="r") as f:
-    lines = [line[:-1] for line in f.readlines()]
-
-while True:
-    spam()
+    while True:
+        spam()

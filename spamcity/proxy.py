@@ -54,7 +54,7 @@ def proxy_generator(proxies: List[str]) -> Dict[str, str]:
     return proxy
 
 
-def download_proxy(download_proxy: str | List[str] = DEFAULT_DOWNLOAD_PROXY_LIST):
+def download_proxy(download_proxy: str | List[str] = DEFAULT_DOWNLOAD_PROXY_LIST) -> List[str]:
     """Download proxies from the internet
 
     :param download_proxy: One or multiple url were the proxies are stored, defaults to DEFAULT_DOWNLOAD_PROXY_LIST
@@ -71,19 +71,3 @@ def download_proxy(download_proxy: str | List[str] = DEFAULT_DOWNLOAD_PROXY_LIST
 
     return results
 
-# with open("proxies.txt", mode='r') as f:
-#    lines = [line[:-1] for line in f.readlines()]
-
-# with Pool() as p:
-#    results = []
-#    for result in tqdm.tqdm(p.imap_unordered(is_proxy_working, lines), total=len(lines)):
-#        results.append(result)
-
-
-# proxies = [proxy + '\n' for proxy, valid in results if valid]
-
-# with open("proxies.txt", mode='w') as f:
-#    f.writelines(proxies)
-
-#with open("proxies.txt", mode="r") as f:
-#    lines = [line[:-1] for line in f.readlines()]
