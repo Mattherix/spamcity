@@ -145,6 +145,21 @@ def spam():
 
 
 if __name__ == '__main__':
+    if not exists("proxies.txt"):
+        print("Downloading proxies")
+        lines = download_proxy()
+
+        print("Filtering proxies")
+        with Pool() as p:
+            results = []
+            for result in tqdm.tqdm(p.imap_unordered(is_proxy_working, lines), total=len(lines)):
+                results.append(result)
+
+        proxies = [proxy + '\n' for proxy, valid in results if valid]
+
+        with open("proxies.txt", mode='w') as f:
+            f.writelines(proxies)
+
     with open("proxies.txt", mode="r") as f:
         lines = [line[:-1] for line in f.readlines()]
 
