@@ -1,25 +1,13 @@
-import urllib
-from itertools import count
 from multiprocessing import Pool
-from random import choice, randint
-from time import sleep
-from typing import Tuple
-import requests
-from bs4 import BeautifulSoup
-import tqdm
 from os.path import exists
-from proxy import download_proxy, is_proxy_working, proxy_generator
+from random import choice
 
+import requests
+import tqdm
+from beautifulsoup4 import BeautifulSoup
 
-def pretty_print_POST(req):
-    print(
-        "{}\n{}\r\n{}\r\n\r\n{}".format(
-            "-----------REQUEST-----------",
-            req.method + " " + req.url,
-            "\r\n".join("{}: {}".format(k, v) for k, v in req.headers.items()),
-            req.body,
-        )
-    )
+from .proxy import download_proxy, is_proxy_working, proxy_generator
+from .utils import pretty_print_POST
 
 
 def spam():
@@ -144,7 +132,7 @@ def spam():
         print("connection failed")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     if not exists("proxies.txt"):
         print("Downloading proxies")
         lines = download_proxy()
@@ -152,12 +140,14 @@ if __name__ == '__main__':
         print("Filtering proxies")
         with Pool() as p:
             results = []
-            for result in tqdm.tqdm(p.imap_unordered(is_proxy_working, lines), total=len(lines)):
+            for result in tqdm.tqdm(
+                p.imap_unordered(is_proxy_working, lines), total=len(lines)
+            ):
                 results.append(result)
 
-        proxies = [proxy + '\n' for proxy, valid in results if valid]
+        proxies = [proxy + "\n" for proxy, valid in results if valid]
 
-        with open("proxies.txt", mode='w') as f:
+        with open("proxies.txt", mode="w") as f:
             f.writelines(proxies)
 
     with open("proxies.txt", mode="r") as f:
